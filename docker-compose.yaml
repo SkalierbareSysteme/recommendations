@@ -1,0 +1,57 @@
+name: recommendation-microservice
+
+services:
+  recommendation_db:
+    image: postgres:latest
+    container_name: recommendation_db
+    restart: always
+    environment:
+      POSTGRES_USER: recommendationuser
+      POSTGRES_PASSWORD: recommendationpw
+      POSTGRES_DB: recommendationdb
+
+    ports:
+      - "5444:5432"
+    networks:
+      - internal
+    volumes:
+      - postgres_data_recommendation:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U recommendationuser -d recommendationdb -h recommendation_db -p 5432"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  recommendation_microservice:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: recommendation_ms
+    ports:
+      - "8006:8006"
+    depends_on:
+      recommendation_db:
+        condition: service_healthy
+    links:
+      - recommendation_db:recommendation_db
+    environment:
+      POSTGRES_USER: recommendationuser
+      POSTGRES_PASSWORD: recommendationpw
+      POSTGRES_DB: recommendationdb
+      POSTGRES_HOST: recommendation_db
+      POSTGRES_PORT: 5432
+      #INTERACTIONS_SERVICE_URL: http://interactions-service:8005
+
+    networks:
+      #- finders-network
+      - internal
+
+networks:
+  internal:
+    driver: bridge
+  #finders-network:
+    #external: true
+
+volumes:
+  postgres_data_recommendation:
+    driver: local
