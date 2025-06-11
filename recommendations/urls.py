@@ -17,6 +17,14 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 
+from recommendations_app import views
+
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('', views.healthcheck, name='healthcheck'),
+    path('recommendations/', views.get_all_recommendations, name='get_all_recommendations'),
+    path('recommendations/<uuid:recommendation_id>/', views.get_recommendation, name='get_recommendation'),
+    path('recommendations/new/', views.add_recommendation, name='add_recommendation'),
+    path('recommendations/delete/<uuid:recommendation_id>/', views.delete_recommendation, name='delete_recommendation'),
+    path('recommendations/update/rec_amount/<uuid:recommendation_id>/', views.update_amount_of_recommendations, name='update_amount_of_recommendations'),
 ]
