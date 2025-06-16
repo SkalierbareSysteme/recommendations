@@ -1,5 +1,6 @@
 import json
 
+from django.core import serializers
 from django.http import JsonResponse, HttpResponse
 from django.shortcuts import get_object_or_404
 from rest_framework.decorators import api_view
@@ -14,7 +15,8 @@ def healthcheck(request):
 
 @api_view(['GET'])
 def get_all_recommendations(request):
-    recommendations = Recommendation.objects.all()
+    recommendations = list(Recommendation.objects.all()).values()
+
     return JsonResponse(recommendations, status=200)
 
 
@@ -22,7 +24,19 @@ def get_all_recommendations(request):
 def get_recommendation(request, recommendation_id):
     recommendation = get_object_or_404(Recommendation, id=recommendation_id)
 
-    return JsonResponse(recommendation, status=200, safe=False)
+    recommendation_json = {
+        'name': recommendation.name,
+        'description': recommendation.description,
+        'address': recommendation.address,
+        'tags': recommendation.tags,
+        'posted_by': recommendation.posted_by,
+        'posted_on': recommendation.posted_on,
+        'poster_id': recommendation.poster_id,
+        'amount_of_recommendations': recommendation.amount_of_recommendations,
+        'reviewer_id': recommendation.reviewer_id
+    }
+
+    return JsonResponse(recommendation_json, status=200, safe=False)
 
 
 @api_view(['POST'])
@@ -36,6 +50,7 @@ def add_recommendation(request):
     r_description = request_body.get('description')
     r_posted_by = request_body.get('posted_by')
     r_poster_id = request_body.get('poster_id')
+    #reviewer_id?
 
     recommendation = Recommendation.objects.create(
         name=r_name,
@@ -45,7 +60,7 @@ def add_recommendation(request):
         posted_by=r_posted_by,
         poster_id=r_poster_id,
         amount_of_recommendations=1,
-        reviwed_by=None,
+        reviewer_id=0,
     )
 
     return JsonResponse({"Recommendation:": recommendation.id}, status=200)
