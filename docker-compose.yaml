@@ -43,14 +43,14 @@ services:
       #INTERACTIONS_SERVICE_URL: http://interactions-service:8005
 
     networks:
-      #- finders-network
-      - internal
+      - finders-network
+      - internal-recommendation
 
 networks:
-  internal:
+  internal-recommendation:
     driver: bridge
-  #finders-network:
-    #external: true
+  finders-network:
+    external: true
 
 volumes:
   postgres_data_recommendation:
