@@ -13,7 +13,7 @@ services:
     ports:
       - "5444:5432"
     networks:
-      - internal
+      - internal-recommendation
     volumes:
       - postgres_data_recommendation:/var/lib/postgresql/data
     healthcheck:
