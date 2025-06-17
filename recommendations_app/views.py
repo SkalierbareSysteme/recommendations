@@ -48,8 +48,6 @@ def add_recommendation(request):
     r_address = request_body.get('address')
     r_tags = request_body.get('tags')
     r_description = request_body.get('description')
-    r_posted_by = request_body.get('posted_by')
-    r_poster_id = request_body.get('poster_id')
     #reviewer_id?
 
     recommendation = Recommendation.objects.create(
@@ -57,8 +55,8 @@ def add_recommendation(request):
         address=r_address,
         tags=r_tags,
         description=r_description,
-        posted_by=r_posted_by,
-        poster_id=r_poster_id,
+        posted_by="guy",
+        poster_id="1",
         amount_of_recommendations=1,
         reviewer_id=0,
     )
