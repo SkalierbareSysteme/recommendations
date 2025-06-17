@@ -15,9 +15,8 @@ def healthcheck(request):
 
 @api_view(['GET'])
 def get_all_recommendations(request):
-    recommendations = list(Recommendation.objects.all()).values()
-
-    return JsonResponse(recommendations, status=200)
+    recommendations = Recommendation.objects.all().values()
+    return JsonResponse(list(recommendations), safe=False, status=200)
 
 
 @api_view(['GET'])
